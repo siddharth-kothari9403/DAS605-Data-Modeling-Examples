@@ -24,16 +24,52 @@ export default function ArticleEditor({ article, setArticle }) {
 
   useEffect(() => {
     if (!editor) return;
-  
+    
     if (article.contentHTML) {
-      editor.commands.setContent(article.contentHTML, false);
-    } else {
-      editor.commands.clearContent();
+      editor.commands.setContent(article.contentHTML, false); // load once
     }
-  }, [editor, article.contentHTML]);
+  }, [editor]); // only depend on editor, NOT article.contentHTML
   
 
   if (!editor) return null;
+
+  const loadFromXML = (e) => {
+    if (!editor) return;
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(reader.result, "text/xml");
+
+      const title = xmlDoc.querySelector("metadata > title")?.textContent || "";
+      const author = xmlDoc.querySelector("metadata > author")?.textContent || "";
+      const date = xmlDoc.querySelector("metadata > date")?.textContent || "";
+
+      let contentHTML = "";
+      const blocks = Array.from(xmlDoc.querySelectorAll("content > block"));
+
+      blocks.forEach(block => {
+        const type = block.getAttribute("type");
+
+        if (type === "paragraph" || type === "heading") {
+          contentHTML += block.textContent;
+        }
+
+        if (type === "image") {
+          const src = block.getAttribute("src");
+          const alt = block.getAttribute("alt") || "";
+          contentHTML += `<img src="${src}" alt="${alt}" />`;
+        }
+      });
+
+      setArticle({ title, author, date, contentHTML });
+      editor.commands.setContent(contentHTML, false);
+    };
+
+    reader.readAsText(file);
+  };
 
   const addParagraph = () => {
     editor
@@ -131,6 +167,25 @@ export default function ArticleEditor({ article, setArticle }) {
       >
         <EditorContent editor={editor} />
       </div>
+      <hr/>
+      <div
+          style={{
+            display: "flex",
+            gap: "12px",
+            alignItems: "center",
+            flexWrap: "wrap"
+          }}
+        >
+          <h3>Load Article from XML</h3>
+          <label className="your-button-class" style={{ cursor: "pointer" }}>
+            <input
+              type="file"
+              accept=".xml"
+              onChange={loadFromXML}
+              style={{ display: "inline-block", width: "auto", marginLeft: "8px" }}
+            />
+          </label>
+        </div>
     </div>
   );
 }

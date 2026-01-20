@@ -26,8 +26,8 @@
             padding: 30px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
           }
-          h1 {
-            margin-top: 0;
+          h1, h2, h3, h4, h5, h6 {
+            margin-top: 20px;
             color: #333;
           }
           .meta {
@@ -87,37 +87,46 @@
 
           <hr/>
 
-          <!-- TOC (HTML-style, no page numbers) -->
+          <!-- Table of Contents -->
           <div class="toc">
             <h3>Contents</h3>
             <ul>
               <xsl:for-each select="content/block[@type='heading']">
                 <li>
-                  <a href="#h{position()}">
-                    <xsl:value-of select="."/>
+                  <a>
+                    <xsl:attribute name="href">
+                      <xsl:text>#h</xsl:text>
+                      <xsl:number count="content/block[@type='heading']" level="any"/>
+                    </xsl:attribute>
+                    <xsl:value-of select="." disable-output-escaping="yes"/>
                   </a>
                 </li>
               </xsl:for-each>
             </ul>
           </div>
 
-          <!-- Content -->
+          <!-- Article Content -->
           <div class="content">
             <xsl:for-each select="content/block">
               <xsl:choose>
-
-                <!-- Heading -->
+          
+                <!-- Heading with dynamic level -->
                 <xsl:when test="@type='heading'">
-                  <h2 id="h{position()}">
-                    <xsl:value-of select="."/>
-                  </h2>
+                  <xsl:variable name="level" select="@level"/>
+                  <xsl:element name="h{$level}">
+                    <xsl:attribute name="id">
+                      <xsl:text>h</xsl:text>
+                      <xsl:number count="content/block[@type='heading']" level="any"/>
+                    </xsl:attribute>
+                    <xsl:value-of select="." disable-output-escaping="yes"/>
+                  </xsl:element>
                 </xsl:when>
-
-                <!-- Paragraph (rich HTML via CDATA) -->
+          
+                <!-- Paragraph -->
                 <xsl:when test="@type='paragraph'">
                   <xsl:value-of select="." disable-output-escaping="yes"/>
                 </xsl:when>
-
+          
                 <!-- Image -->
                 <xsl:when test="@type='image'">
                   <img>
@@ -129,7 +138,7 @@
                     </xsl:attribute>
                   </img>
                 </xsl:when>
-
+          
               </xsl:choose>
             </xsl:for-each>
           </div>

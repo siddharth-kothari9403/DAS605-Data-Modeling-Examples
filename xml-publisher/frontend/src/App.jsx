@@ -71,70 +71,20 @@ function App() {
     a.click();
   
     URL.revokeObjectURL(url);
-  };  
-  
-  const loadFromXML = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-  
-    const reader = new FileReader();
-  
-    reader.onload = () => {
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(reader.result, "text/xml");
-  
-      const title =
-        xmlDoc.querySelector("metadata > title")?.textContent || "";
-      const author =
-        xmlDoc.querySelector("metadata > author")?.textContent || "";
-      const date =
-        xmlDoc.querySelector("metadata > date")?.textContent || "";
-  
-      let contentHTML = "";
-  
-      const blocks = Array.from(
-        xmlDoc.querySelectorAll("content > block")
-      );
-  
-      blocks.forEach(block => {
-        const type = block.getAttribute("type");
-  
-        if (type === "paragraph") {
-          contentHTML += block.textContent;
-        }
-  
-        if (type === "heading") {
-          // CDATA already contains <h1>..<h6>
-          contentHTML += block.textContent;
-        }
-  
-        if (type === "image") {
-          const src = block.getAttribute("src");
-          const alt = block.getAttribute("alt") || "";
-          contentHTML += `<img src="${src}" alt="${alt}" />`;
-        }
-      });
-  
-      setArticle({
-        title,
-        author,
-        date,
-        contentHTML
-      });
-    };
-  
-    reader.readAsText(file);
   };
   
   const publishToHTML = async () => {
     const xmlString = buildArticleXML(article);
-
-    const result = await transformXML(
-      xmlString, 
-      "/xsl/article-to-html.xsl"
-    )
-
-    const htmlString = new XMLSerializer().serializeToString(result);
+  
+    const fragment = await transformXML(
+      xmlString,
+      "/xslt/article-to-html.xsl"
+    );
+  
+    const container = document.createElement("html");
+    container.appendChild(fragment.cloneNode(true));
+  
+    const htmlString = "<!DOCTYPE html>\n" + container.outerHTML;
   
     const blob = new Blob([htmlString], { type: "text/html" });
     const url = URL.createObjectURL(blob);
@@ -198,28 +148,10 @@ function App() {
         setArticle={setArticle}
       />
 
-      <hr />
+      
 
       <div style={{ marginTop: "20px" }}>
-
-        <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            alignItems: "center",
-            flexWrap: "wrap"
-          }}
-        >
-          <h3>Load Article from XML</h3>
-          <label className="your-button-class" style={{ cursor: "pointer" }}>
-            <input
-              type="file"
-              accept=".xml"
-              onChange={loadFromXML}
-              style={{ display: "inline-block", width: "auto", marginLeft: "8px" }}
-            />
-          </label>
-        </div>
+        
         <div>
           <hr />
           <h3>Publishing Actions</h3>
