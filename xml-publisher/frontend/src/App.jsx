@@ -8,32 +8,143 @@ function App() {
     title: "",
     author: "",
     date: "",
-    paragraphs: [""]
-  });
+    blocks: [{ type: "paragraph", value: "" }]
+  });  
 
   const saveAsXML = () => {
-    const xmlString = buildArticleXML(article);
-
-    const blob = new Blob([xmlString], { type: "application/xml" });
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<article version="1.0">\n`;
+  
+    xml += `  <metadata>\n`;
+    xml += `    <title>${article.title}</title>\n`;
+    xml += `    <author>${article.author}</author>\n`;
+    xml += `    <date>${article.date}</date>\n`;
+    xml += `  </metadata>\n`;
+  
+    xml += `  <content>\n`;
+  
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(article.contentHTML, "text/html");
+  
+    doc.body.childNodes.forEach(node => {
+  
+      /* Paragraphs */
+      if (node.nodeName === "P") {
+        if (node.innerHTML === "<br>" || node.textContent.trim() === "") return;
+  
+        xml += `
+          <block type="paragraph">
+            <![CDATA[${node.outerHTML}]]>
+          </block>`;
+      }
+  
+      /* Headings */
+      if (/^H[1-6]$/.test(node.nodeName)) {
+        const level = node.nodeName.substring(1);
+  
+        xml += `
+          <block type="heading" level="${level}">
+            <![CDATA[${node.outerHTML}]]>
+          </block>`;
+      }
+  
+      /* Images */
+      if (node.nodeName === "IMG") {
+        const src = node.getAttribute("src") || "";
+        const alt = node.getAttribute("alt") || "";
+  
+        xml += `
+          <block type="image" src="${src}" alt="${alt}" />`;
+      }
+    });
+  
+    xml += `
+    </content>
+  </article>`;
+  
+    const blob = new Blob([xml], { type: "application/xml" });
     const url = URL.createObjectURL(blob);
-
+  
     const a = document.createElement("a");
     a.href = url;
     a.download = "article.xml";
     a.click();
-
+  
     URL.revokeObjectURL(url);
+  };  
+  
+  const loadFromXML = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const reader = new FileReader();
+  
+    reader.onload = () => {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(reader.result, "text/xml");
+  
+      const title =
+        xmlDoc.querySelector("metadata > title")?.textContent || "";
+      const author =
+        xmlDoc.querySelector("metadata > author")?.textContent || "";
+      const date =
+        xmlDoc.querySelector("metadata > date")?.textContent || "";
+  
+      let contentHTML = "";
+  
+      const blocks = Array.from(
+        xmlDoc.querySelectorAll("content > block")
+      );
+  
+      blocks.forEach(block => {
+        const type = block.getAttribute("type");
+  
+        if (type === "paragraph") {
+          contentHTML += block.textContent;
+        }
+  
+        if (type === "heading") {
+          // CDATA already contains <h1>..<h6>
+          contentHTML += block.textContent;
+        }
+  
+        if (type === "image") {
+          const src = block.getAttribute("src");
+          const alt = block.getAttribute("alt") || "";
+          contentHTML += `<img src="${src}" alt="${alt}" />`;
+        }
+      });
+  
+      setArticle({
+        title,
+        author,
+        date,
+        contentHTML
+      });
+    };
+  
+    reader.readAsText(file);
   };
-
+  
   const publishToHTML = async () => {
     const xmlString = buildArticleXML(article);
+
     const result = await transformXML(
-      xmlString,
-      "/xslt/article-to-html.xsl"
-    );
+      xmlString, 
+      "/xsl/article-to-html.xsl"
+    )
+
+    const htmlString = new XMLSerializer().serializeToString(result);
   
-    const win = window.open("", "_blank");
-    win.document.body.appendChild(result);
+    const blob = new Blob([htmlString], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+  
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "article.html";
+    a.click();
+  
+    URL.revokeObjectURL(url);
   };
   
   const publishToRSS = async () => {
@@ -76,35 +187,6 @@ function App() {
     a.click();
   
     URL.revokeObjectURL(url);
-  };  
-
-  const loadFromXML = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-  
-    const reader = new FileReader();
-  
-    reader.onload = () => {
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(reader.result, "text/xml");
-  
-      const title = xmlDoc.querySelector("title")?.textContent || "";
-      const author = xmlDoc.querySelector("author")?.textContent || "";
-      const date = xmlDoc.querySelector("date")?.textContent || "";
-  
-      const paragraphs = Array.from(
-        xmlDoc.querySelectorAll("content > paragraph")
-      ).map(p => p.textContent);
-  
-      setArticle({
-        title,
-        author,
-        date,
-        paragraphs: paragraphs.length ? paragraphs : [""]
-      });
-    };
-  
-    reader.readAsText(file);
   };  
 
   return (

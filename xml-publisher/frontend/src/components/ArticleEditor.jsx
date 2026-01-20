@@ -1,28 +1,80 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
 
 export default function ArticleEditor({ article, setArticle }) {
-  const handleChange = (field, value) => {
-    setArticle({
-      ...article,
-      [field]: value
-    });
-  };
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
+      Image.configure({ inline: false }),
+    ],
+    content: "<p></p>",
+    onUpdate: ({ editor }) => {
+      setArticle(prev => ({
+        ...prev,
+        contentHTML: editor.getHTML(),
+      }));
+    },
+  });
 
-  const handleParagraphChange = (index, value) => {
-    const updatedParagraphs = [...article.paragraphs];
-    updatedParagraphs[index] = value;
+  useEffect(() => {
+    if (!editor) return;
+  
+    if (article.contentHTML) {
+      editor.commands.setContent(article.contentHTML, false);
+    } else {
+      editor.commands.clearContent();
+    }
+  }, [editor, article.contentHTML]);
+  
 
-    setArticle({
-      ...article,
-      paragraphs: updatedParagraphs
-    });
-  };
+  if (!editor) return null;
 
   const addParagraph = () => {
-    setArticle({
-      ...article,
-      paragraphs: [...article.paragraphs, ""]
-    });
+    editor
+      .chain()
+      .focus()
+      .command(({ state, tr }) => {
+        const pos = state.selection.to;
+  
+        tr.insert(pos, state.schema.nodes.paragraph.create());
+        tr.setSelection(
+          state.selection.constructor.near(tr.doc.resolve(pos + 1))
+        );
+  
+        return true;
+      })
+      .run();
+  };   
+
+  const addHeading = (level = 2) => {
+    editor
+      .chain()
+      .focus()
+      .command(({ state, tr }) => {
+        const pos = state.selection.to;
+        const heading = state.schema.nodes.heading.create({ level });
+  
+        tr.insert(pos, heading);
+        tr.setSelection(
+          state.selection.constructor.near(tr.doc.resolve(pos + 1))
+        );
+  
+        return true;
+      })
+      .run();
+  };  
+
+  const addImage = () => {
+    const url = prompt("Image URL");
+    if (url) {
+      editor.chain().focus().setImage({ src: url }).run();
+    }
   };
 
   return (
@@ -34,7 +86,9 @@ export default function ArticleEditor({ article, setArticle }) {
         <input
           type="text"
           value={article.title}
-          onChange={(e) => handleChange("title", e.target.value)}
+          onChange={e =>
+            setArticle({ ...article, title: e.target.value })
+          }
         />
       </div>
 
@@ -43,7 +97,9 @@ export default function ArticleEditor({ article, setArticle }) {
         <input
           type="text"
           value={article.author}
-          onChange={(e) => handleChange("author", e.target.value)}
+          onChange={e =>
+            setArticle({ ...article, author: e.target.value })
+          }
         />
       </div>
 
@@ -52,26 +108,29 @@ export default function ArticleEditor({ article, setArticle }) {
         <input
           type="date"
           value={article.date}
-          onChange={(e) => handleChange("date", e.target.value)}
+          onChange={e =>
+            setArticle({ ...article, date: e.target.value })
+          }
         />
       </div>
 
-      <div>
-        <label>Content</label>
-        {article.paragraphs.map((para, index) => (
-          <div key={index}>
-            <textarea
-              rows="3"
-              value={para}
-              onChange={(e) =>
-                handleParagraphChange(index, e.target.value)
-              }
-            />
-          </div>
-        ))}
+      <div style={{ marginTop: "12px" }}>
+        <button onClick={addParagraph}>Add Paragraph</button>
+        <button onClick={() => addHeading(1)}>H1</button>
+        <button onClick={() => addHeading(2)}>H2</button>
+        <button onClick={() => addHeading(3)}>H3</button>
+        <button onClick={addImage}>Add Image</button>
       </div>
 
-      <button onClick={addParagraph}>Add Paragraph</button>
+      <div
+        style={{
+          border: "1px solid #ccc",
+          padding: "10px",
+          marginTop: "10px",
+        }}
+      >
+        <EditorContent editor={editor} />
+      </div>
     </div>
   );
 }
