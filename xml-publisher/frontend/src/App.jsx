@@ -41,9 +41,10 @@ function App() {
       /* Headings */
       if (/^H[1-6]$/.test(node.nodeName)) {
         const level = node.nodeName.substring(1);
+        const innerText = node.textContent.replace(/"/g, "&quot;");
   
         xml += `
-          <block type="heading" level="${level}">
+          <block type="heading" level="${level}" text="${innerText}">
             <![CDATA[${node.outerHTML}]]>
           </block>`;
       }
@@ -147,8 +148,6 @@ function App() {
         article={article}
         setArticle={setArticle}
       />
-
-      
 
       <div style={{ marginTop: "20px" }}>
         

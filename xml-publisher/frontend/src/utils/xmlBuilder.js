@@ -32,8 +32,12 @@ export function buildArticleXML(article) {
         const blockEl = doc.createElement("block");
         blockEl.setAttribute("type", "heading");
         blockEl.setAttribute("level", node.nodeName.substring(1));
-
-        blockEl.textContent = node.textContent;
+        blockEl.setAttribute("text", node.textContent); // <<< ADD THIS LINE
+      
+        // Store the full HTML in CDATA (optional, for browser rendering)
+        const cdata = doc.createCDATASection(node.outerHTML);
+        blockEl.appendChild(cdata);
+      
         contentEl.appendChild(blockEl);
       }
 
