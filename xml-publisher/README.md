@@ -74,16 +74,37 @@ xml-publisher/
 The application uses this XML Structure to represent a news object.
 
 ```
-<article>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<article version="1.0">
   <metadata>
-    <title>Article Title</title>
-    <author>Author Name</author>
-    <date>2026-01-15</date>
+    <title>Lorem Ipsum</title>
+    <author>Siddharth</author>
+    <date>2026-02-07</date>
   </metadata>
   <content>
-    <paragraph>First paragraph content...</paragraph>
-    <paragraph>Second paragraph content...</paragraph>
-    <!-- More paragraphs -->
+
+          <block type="heading" level="1">
+            Lorem Ipsum
+          </block>
+          <block type="paragraph">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus lacus, faucibus at arcu ac, scelerisque efficitur mauris. Aliquam gravida rhoncus mi, ut aliquam magna cursus vitae. Nulla semper nulla in ipsum auctor faucibus. Fusce consequat varius pulvinar. Nulla eget mollis odio. Ut suscipit pretium enim, vel consequat nisi facilisis vel. Suspendisse dolor nisi, tincidunt ac porta in, dictum ac orci. Aliquam odio dui, sagittis a nibh nec, vehicula volutpat libero. Suspendisse ut conva
+          </block>
+          <block type="paragraph">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer et pharetra ligula. Mauris imperdiet tincidunt hendrerit. Donec aliquam faucibus magna. Donec nec tellus ac nibh lacinia placerat. Aliquam rutrum, nunc quis pulvinar cursus, nisl urna bibendum velit, nec dictum odio odio sit amet leo. Nam luctus massa ac enim vestibulum, ut fermentum felis pellentesque. Cras tristique, leo eu viverra congue, dui dolor dignissim ipsum, a malesuada quam metus vitae ligula. Curabitur leo diam, euismod auctor orci at, ullamcorper luctus ex. Proin id ornare ipsum. Cras vitae risus eget leo fringilla convallis sed eget justo. Integer dictum turpis tellus, eu scelerisque metus efficitur sed. Sed et orci elit. Vivamus ac faucibus libero, eget accumsan lacus. Suspendisse dui nisi, vulputate quis aliquet et, hendrerit quis felis. Sed quam quam, congue in viverra eu, suscipit gravida mi.
+          </block>
+          <block type="image" src="https://independentaustralia.net/_lib/slir/w800-c660x434/i/article/img/article-19811-hero.jpg?t=1749265169" alt="" />
+          <block type="paragraph">
+            Donec nec faucibus ipsum. Nunc dapibus ornare est, vitae accumsan lacus blandit ut. Aenean vel neque posuere, posuere lacus vel, pulvinar eros. Integer tristique, magna ac consectetur pellentesque, nulla sem vestibulum turpis, et ultrices augue justo vel lectus. Ut id metus in ex gravida porta ac et orci. Sed feugiat ex at risus interdum, vitae fermentum enim consequat. Aliquam quis nulla in massa dapibus consectetur ac.
+          </block>
+          <block type="paragraph">
+            Pellentesque sollicitudin est vel odio volutpat, sit amet lacinia tortor rhoncus. Duis eu consequat libero. Nam eu nibh maximus, pharetra risus vel, lobortis ex. Etiam eget mi risus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque maximus efficitur magna vitae dapibus. Pellentesque in libero eget eros fringilla facilisis. Fusce aliquet, orci sed tincidunt malesuada, eros augue tincidunt tortor, eget dignissim quam lectus ac arcu. Etiam tincidunt tincidunt eros sit amet eleifend. Morbi tincidunt eleifend est, eget fermentum nulla commodo eget. Etiam eleifend viverra risus, porta mattis risus accumsan sed. Cras sapien nisi, gravida id arcu ut, fringilla accumsan dolor. Donec eu sapien consequat, maximus enim eget, accumsan nunc. Integer tempus semper ornare. Etiam convallis auctor felis, ut fermentum quam feugiat sit amet.
+          </block>
+          <block type="heading" level="3">
+            Lorem Ipsum Forever
+          </block>
+          <block type="image" src="https://slp-statics.astockcdn.net/static_assets/staging/25spring/US_homepage/HP_storytelling_1439510772.jpg?width=580" alt="" />
+          
   </content>
 </article>
 ```

@@ -15,12 +15,14 @@ function App() {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<article version="1.0">\n`;
   
+    /* ---------- metadata ---------- */
     xml += `  <metadata>\n`;
     xml += `    <title>${article.title}</title>\n`;
     xml += `    <author>${article.author}</author>\n`;
     xml += `    <date>${article.date}</date>\n`;
     xml += `  </metadata>\n`;
   
+    /* ---------- content ---------- */
     xml += `  <content>\n`;
   
     const parser = new DOMParser();
@@ -28,28 +30,29 @@ function App() {
   
     doc.body.childNodes.forEach(node => {
   
-      /* Paragraphs */
+      /* ---- paragraphs ---- */
       if (node.nodeName === "P") {
-        if (node.innerHTML === "<br>" || node.textContent.trim() === "") return;
+        const text = node.textContent.trim();
+        if (!text) return;
   
         xml += `
           <block type="paragraph">
-            <![CDATA[${node.outerHTML}]]>
+            ${text}
           </block>`;
       }
   
-      /* Headings */
+      /* ---- headings ---- */
       if (/^H[1-6]$/.test(node.nodeName)) {
         const level = node.nodeName.substring(1);
-        const innerText = node.textContent.replace(/"/g, "&quot;");
+        const text = node.textContent.trim();
   
         xml += `
-          <block type="heading" level="${level}" text="${innerText}">
-            <![CDATA[${node.outerHTML}]]>
+          <block type="heading" level="${level}">
+            ${text}
           </block>`;
       }
   
-      /* Images */
+      /* ---- images ---- */
       if (node.nodeName === "IMG") {
         const src = node.getAttribute("src") || "";
         const alt = node.getAttribute("alt") || "";
@@ -72,7 +75,7 @@ function App() {
     a.click();
   
     URL.revokeObjectURL(url);
-  };
+  };  
   
   const publishToHTML = async () => {
     const xmlString = buildArticleXML(article);

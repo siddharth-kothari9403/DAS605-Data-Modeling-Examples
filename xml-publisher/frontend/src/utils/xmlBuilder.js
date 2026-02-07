@@ -28,28 +28,23 @@ export function buildArticleXML(article) {
     htmlDoc.body.childNodes.forEach(node => {
 
       /* ---- headings ---- */
-      if (node.nodeName === "H1" || node.nodeName === "H2" || node.nodeName === "H3") {
+      if (/^H[1-6]$/.test(node.nodeName)) {
         const blockEl = doc.createElement("block");
         blockEl.setAttribute("type", "heading");
         blockEl.setAttribute("level", node.nodeName.substring(1));
-        blockEl.setAttribute("text", node.textContent); // <<< ADD THIS LINE
-      
-        // Store the full HTML in CDATA (optional, for browser rendering)
-        const cdata = doc.createCDATASection(node.outerHTML);
-        blockEl.appendChild(cdata);
-      
+        blockEl.textContent = node.textContent.trim();
+
         contentEl.appendChild(blockEl);
       }
 
       /* ---- paragraphs ---- */
       if (node.nodeName === "P") {
-        if (node.innerHTML === "<br>" || node.textContent.trim() === "") return;
+        const text = node.textContent.trim();
+        if (!text) return;
 
         const blockEl = doc.createElement("block");
         blockEl.setAttribute("type", "paragraph");
-
-        const cdata = doc.createCDATASection(node.outerHTML);
-        blockEl.appendChild(cdata);
+        blockEl.textContent = text;
 
         contentEl.appendChild(blockEl);
       }

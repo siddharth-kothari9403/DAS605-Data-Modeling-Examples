@@ -29,14 +29,14 @@
             <xsl:value-of select="metadata/date"/>
           </pubDate>
 
-          <!-- RSS description as CDATA-style HTML -->
+          <!-- RSS description as embedded HTML -->
           <description>
             <xsl:text disable-output-escaping="yes"><![CDATA[
 ]]></xsl:text>
 
             <xsl:for-each select="content/block">
 
-              <!-- Headings → <p><strong> -->
+              <!-- Headings -->
               <xsl:if test="@type='heading'">
                 <xsl:text disable-output-escaping="yes"><![CDATA[
 <p><strong>]]></xsl:text>
@@ -53,7 +53,7 @@
                 <xsl:text disable-output-escaping="yes"><![CDATA[
 <p>]]></xsl:text>
 
-                <xsl:value-of select="." disable-output-escaping="yes"/>
+                <xsl:value-of select="."/>
 
                 <xsl:text disable-output-escaping="yes"><![CDATA[
 </p>
@@ -67,15 +67,12 @@
 
                 <xsl:value-of select="@src"/>
 
-                <xsl:text disable-output-escaping="yes"><![CDATA["]]></xsl:text>
-
                 <xsl:if test="@alt">
-                  <xsl:text disable-output-escaping="yes"><![CDATA[ alt="]]></xsl:text>
+                  <xsl:text disable-output-escaping="yes"><![CDATA[" alt="]]></xsl:text>
                   <xsl:value-of select="@alt"/>
-                  <xsl:text disable-output-escaping="yes"><![CDATA["]]></xsl:text>
                 </xsl:if>
 
-                <xsl:text disable-output-escaping="yes"><![CDATA[ />
+                <xsl:text disable-output-escaping="yes"><![CDATA[" />
 ]]></xsl:text>
               </xsl:if>
 

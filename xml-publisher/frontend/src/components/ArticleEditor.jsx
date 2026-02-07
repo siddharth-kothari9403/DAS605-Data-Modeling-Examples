@@ -53,12 +53,20 @@ export default function ArticleEditor({ article, setArticle }) {
       blocks.forEach(block => {
         const type = block.getAttribute("type");
 
-        if (type === "paragraph" || type === "heading") {
-          contentHTML += block.textContent;
+        if (type === "paragraph") {
+          const text = block.textContent.trim();
+          if (!text) return;
+          contentHTML += `<p>${text}</p>`;
+        }
+
+        if (type === "heading") {
+          const level = block.getAttribute("level") || "1";
+          const text = block.textContent.trim();
+          contentHTML += `<h${level}>${text}</h${level}>`;
         }
 
         if (type === "image") {
-          const src = block.getAttribute("src");
+          const src = block.getAttribute("src") || "";
           const alt = block.getAttribute("alt") || "";
           contentHTML += `<img src="${src}" alt="${alt}" />`;
         }

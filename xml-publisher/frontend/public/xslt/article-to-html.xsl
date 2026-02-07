@@ -98,7 +98,7 @@
                       <xsl:text>#h</xsl:text>
                       <xsl:number count="content/block[@type='heading']" level="any"/>
                     </xsl:attribute>
-                    <xsl:value-of select="." disable-output-escaping="yes"/>
+                    <xsl:value-of select="."/>
                   </a>
                 </li>
               </xsl:for-each>
@@ -109,8 +109,8 @@
           <div class="content">
             <xsl:for-each select="content/block">
               <xsl:choose>
-          
-                <!-- Heading with dynamic level -->
+
+                <!-- Heading -->
                 <xsl:when test="@type='heading'">
                   <xsl:variable name="level" select="@level"/>
                   <xsl:element name="h{$level}">
@@ -118,15 +118,17 @@
                       <xsl:text>h</xsl:text>
                       <xsl:number count="content/block[@type='heading']" level="any"/>
                     </xsl:attribute>
-                    <xsl:value-of select="." disable-output-escaping="yes"/>
+                    <xsl:value-of select="."/>
                   </xsl:element>
                 </xsl:when>
-          
+
                 <!-- Paragraph -->
                 <xsl:when test="@type='paragraph'">
-                  <xsl:value-of select="." disable-output-escaping="yes"/>
+                  <p>
+                    <xsl:value-of select="."/>
+                  </p>
                 </xsl:when>
-          
+
                 <!-- Image -->
                 <xsl:when test="@type='image'">
                   <img>
@@ -138,7 +140,7 @@
                     </xsl:attribute>
                   </img>
                 </xsl:when>
-          
+
               </xsl:choose>
             </xsl:for-each>
           </div>

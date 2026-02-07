@@ -56,50 +56,49 @@
 
             <!-- Table of Contents -->
             <fo:block
-            font-family="Helvetica, Arial, sans-serif"
-            font-size="18pt"
-            font-weight="bold"
-            space-after="15pt">
-            Contents
+              font-family="Helvetica, Arial, sans-serif"
+              font-size="18pt"
+              font-weight="bold"
+              space-after="15pt">
+              Contents
             </fo:block>
 
             <fo:table
-            width="100%"
-            table-layout="fixed"
-            font-family="Helvetica, Arial, sans-serif"
-            font-size="11pt">
+              width="100%"
+              table-layout="fixed"
+              font-family="Helvetica, Arial, sans-serif"
+              font-size="11pt">
 
-            <fo:table-column column-width="85%"/>
-            <fo:table-column column-width="15%"/>
+              <fo:table-column column-width="85%"/>
+              <fo:table-column column-width="15%"/>
 
-            <fo:table-body>
+              <fo:table-body>
 
-              <xsl:for-each select="content/block[@type='heading']">
-                <fo:table-row>
+                <xsl:for-each select="content/block[@type='heading']">
+                  <fo:table-row>
 
-                  <!-- Heading text -->
-                  <fo:table-cell>
-                    <fo:block>
-                      <xsl:value-of select="@text"/>
-                      <fo:leader leader-pattern="dots"/>
-                    </fo:block>
-                  </fo:table-cell>
+                    <!-- Heading text -->
+                    <fo:table-cell>
+                      <fo:block>
+                        <xsl:value-of select="normalize-space(.)"/>
+                        <fo:leader leader-pattern="dots"/>
+                      </fo:block>
+                    </fo:table-cell>
 
-                  <!-- Page number -->
-                  <fo:table-cell>
-                    <fo:block text-align="right">
-                      <fo:page-number-citation ref-id="h{position()}"/>
-                    </fo:block>
-                  </fo:table-cell>
+                    <!-- Page number -->
+                    <fo:table-cell>
+                      <fo:block text-align="right">
+                        <fo:page-number-citation ref-id="h{position()}"/>
+                      </fo:block>
+                    </fo:table-cell>
 
-                </fo:table-row>
-              </xsl:for-each>
+                  </fo:table-row>
+                </xsl:for-each>
 
-            </fo:table-body>
+              </fo:table-body>
             </fo:table>
 
             <fo:block border-top="1pt solid #dddddd" space-after="20pt"/>
-
 
             <!-- Content -->
             <xsl:for-each select="content/block">
@@ -123,11 +122,11 @@
                       </xsl:choose>
                     </xsl:attribute>
 
-                    <xsl:value-of select="@text"/>
+                    <xsl:value-of select="normalize-space(.)"/>
                   </fo:block>
                 </xsl:when>
 
-                <!-- Paragraphs (strip <p>...</p>) -->
+                <!-- Paragraphs -->
                 <xsl:when test="@type='paragraph'">
                   <fo:block
                     font-family="Helvetica, Arial, sans-serif"
@@ -137,8 +136,7 @@
                     space-after="15pt"
                     text-align="justify">
 
-                    <xsl:value-of
-                      select="substring-before(substring-after(., '&lt;p&gt;'), '&lt;/p&gt;')"/>
+                    <xsl:value-of select="normalize-space(.)"/>
 
                   </fo:block>
                 </xsl:when>
