@@ -1,0 +1,21 @@
+@prefix : <http://example.org/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Class hierarchy
+:DeepLearningMethod rdfs:subClassOf :MachineLearningMethod .
+:MachineLearningMethod rdfs:subClassOf :Method .
+
+:MedicalImaging rdfs:subClassOf :HealthcareDomain .
+:RemoteSensing rdfs:subClassOf :GeographyDomain .
+:AI rdfs:subClassOf :ComputerScienceDomain .
+
+# Property hierarchy
+:usesMethod rdfs:subPropertyOf :usesTechnique .
+:hasDomain rdfs:subPropertyOf :relatedToDomain .
+
+# Domain knowledge (key idea)
+:DeepLearningMethod rdfs:subClassOf :AI_Method .
+
+# Property-based inference for expertise
+:hasAuthor rdfs:domain :Paper .
+:hasAuthor rdfs:range :Author .

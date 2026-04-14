@@ -1,0 +1,28 @@
+# If a paper uses a method, and has an author,
+# then the author is an expert in that method
+
+[rule1:
+ (?p <http://example.org/usesMethod> ?m)
+ (?p <http://example.org/hasAuthor> ?a)
+ ->
+ (?a <http://example.org/expertIn> ?m)
+]
+
+# If expert in a method, and method is a type of Method,
+# then expert in Method category
+
+[rule2:
+ (?a <http://example.org/expertIn> ?m)
+ (?m rdf:type ?type)
+ ->
+ (?a <http://example.org/expertInCategory> ?type)
+]
+
+# If paper has domain and author, infer author works in that domain
+
+[rule3:
+ (?p <http://example.org/hasDomain> ?d)
+ (?p <http://example.org/hasAuthor> ?a)
+ ->
+ (?a <http://example.org/worksInDomain> ?d)
+]

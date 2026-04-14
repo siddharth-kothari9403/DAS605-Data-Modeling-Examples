@@ -1,0 +1,5 @@
+PREFIX : <http://example.org/>
+
+SELECT ?author ?domain WHERE {
+  ?author :worksInDomain ?domain .
+}
