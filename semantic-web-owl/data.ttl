@@ -2,32 +2,36 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
 # Papers
-:Paper1 rdf:type :Paper .
-:Paper1 :hasAuthor :Siddharth .
-:Paper1 :usesMethod :UNet .
-:Paper1 :hasDomain :RemoteSensing .
 
-:Paper2 rdf:type :Paper .
-:Paper2 :hasAuthor :Alice .
-:Paper2 :usesMethod :SVM .
-:Paper2 :hasDomain :AI .
+:Paper1 rdf:type :Paper ;
+        :hasAuthor :Siddharth ;
+        :usesMethod :UNet ;
+        :hasDomain :RemoteSensing .
 
-:Paper3 rdf:type :Paper .
-:Paper3 :hasAuthor :Bob .
-:Paper3 :usesMethod :ResNet .
-:Paper3 :hasDomain :MedicalImaging .
+:Paper2 rdf:type :Paper ;
+        :hasAuthor :Alice ;
+        :usesMethod :SVM ;
+        :hasDomain :AI .
+
+:Paper3 rdf:type :Paper ;
+        :hasAuthor :Bob ;
+        :usesMethod :ResNet ;
+        :hasDomain :MedicalImaging .
 
 # Authors
+
 :Siddharth rdf:type :Author .
 :Alice rdf:type :Author .
 :Bob rdf:type :Author .
 
 # Methods
+
 :UNet rdf:type :DeepLearningMethod .
 :ResNet rdf:type :DeepLearningMethod .
 :SVM rdf:type :MachineLearningMethod .
 
 # Domains
-:RemoteSensing rdf:type :Domain .
-:MedicalImaging rdf:type :Domain .
-:AI rdf:type :Domain .
+
+:RemoteSensing rdf:type :GeographyDomain .
+:MedicalImaging rdf:type :HealthcareDomain .
+:AI rdf:type :ComputerScienceDomain .

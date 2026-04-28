@@ -1,21 +1,38 @@
 @prefix : <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-# Class hierarchy
-:DeepLearningMethod rdfs:subClassOf :MachineLearningMethod .
-:MachineLearningMethod rdfs:subClassOf :Method .
+# Core Classes
 
-:MedicalImaging rdfs:subClassOf :HealthcareDomain .
-:RemoteSensing rdfs:subClassOf :GeographyDomain .
-:AI rdfs:subClassOf :ComputerScienceDomain .
+:Paper rdf:type rdfs:Class .
+:Author rdf:type rdfs:Class .
+
+:Method rdf:type rdfs:Class .
+:MachineLearningMethod rdfs:subClassOf :Method .
+:DeepLearningMethod rdfs:subClassOf :MachineLearningMethod .
+
+:Domain rdf:type rdfs:Class .
+:HealthcareDomain rdfs:subClassOf :Domain .
+:GeographyDomain rdfs:subClassOf :Domain .
+:ComputerScienceDomain rdfs:subClassOf :Domain .
+
+# Properties
+
+:hasAuthor rdf:type rdf:Property .
+:usesMethod rdf:type rdf:Property .
+:hasDomain rdf:type rdf:Property .
 
 # Property hierarchy
 :usesMethod rdfs:subPropertyOf :usesTechnique .
 :hasDomain rdfs:subPropertyOf :relatedToDomain .
 
-# Domain knowledge (key idea)
-:DeepLearningMethod rdfs:subClassOf :AI_Method .
+# Property Constraints
 
-# Property-based inference for expertise
-:hasAuthor rdfs:domain :Paper .
-:hasAuthor rdfs:range :Author .
+:hasAuthor rdfs:domain :Paper ;
+           rdfs:range :Author .
+
+:usesMethod rdfs:domain :Paper ;
+            rdfs:range :Method .
+
+:hasDomain rdfs:domain :Paper ;
+           rdfs:range :Domain .
